@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import { Link } from 'react-router-dom';
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { userLogout } from '../../store/reducers/userReducer/actions';
 import "./style.css";
 
@@ -24,9 +24,11 @@ const pages = [
     { Title: "ІТ", Path: "/it" }
 ];
 
-const Navbar = ({user, isAuth}) => {
+const Navbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+    const { user, isAuth } = useSelector(store => store.auth);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -185,9 +187,4 @@ const Navbar = ({user, isAuth}) => {
     );
 }
 
-const mapStateToProps = (state) => ({
-    user: state.user.user,
-    isAuth: state.user.isAuth
-});
-
-export default connect(mapStateToProps)(Navbar);
+export default Navbar;

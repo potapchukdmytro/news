@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: "https://localhost:5000",
+    baseURL: "https://newsapi.org/v2",
     headers: {
         "Content-Type": "application/json"
     }

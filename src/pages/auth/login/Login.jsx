@@ -1,78 +1,74 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import { Link, useNavigate } from 'react-router-dom';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Copyright from '../../../components/copyright'
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import { FormLabel } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import { Link, useNavigate } from "react-router-dom";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Copyright from "../../../components/copyright";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { authUser } from "../../../store/reducers/userReducer/actions";
-import { connect, useSelector } from 'react-redux';
-import { useEffect, useRef, useState, useCallback } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { GoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { connect, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useAction } from "../../../hooks/useAction";
 
-const Login = ({ authUser }) => {
-
-    //const { executeRecaptcha } = useGoogleReCaptcha();
+const Login = () => {
     const [token, setToken] = useState();
-
-    // const handleReCaptchaVerify = useCallback(async () => {
-    //     if (!executeRecaptcha) {
-    //       console.log('Execute recaptcha not yet available');
-    //       return;
-    //     }
-    
-    //     const token = await executeRecaptcha('yourAction');
-    //     // Do whatever you want with the token
-    //   }, [executeRecaptcha]);
-
-    const recaptcha = useRef()
-
-    const clientId = "1071227799664-848r4gmtminclfnnoiikek893m974t90.apps.googleusercontent.com";
     const navigate = useNavigate();
-    const { isAuth } = useSelector((state) => state.user);
+    const { isAuth } = useSelector((state) => state.auth);
+    const { signIn } = useAction();
 
-    useEffect(() => {
-        //handleReCaptchaVerify();
+    const clientId =
+        "1071227799664-848r4gmtminclfnnoiikek893m974t90.apps.googleusercontent.com";
 
-        if (isAuth) {
-            navigate('/');
+    // useEffect(() => {
+    //     if (isAuth) {
+    //         navigate("/");
+    //     }
+    // }, [isAuth])
+
+    const handleSubmit = async (values) => {
+        const response = await signIn(values);
+        if(!response.success) {
+            alert(response.message)
+        } else {
+            navigate("/");
         }
-    }, []);
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // console.log(executeRecaptcha);
-        // if (!executeRecaptcha) {
-        //     console.log('Execute recaptcha not yet available');
-        //     return;
-        //   }
-
-        // const captchaValue = recaptcha.current.getValue();
-        // if(!captchaValue) {
-        //     alert('Please verify the reCAPTCHA!')
-        // }
-        // else {
-        //     const data = new FormData(event.currentTarget);
-        // }
-        //const token = executeRecaptcha();
-        //console.log(token);
     };
 
-    const auth = (credentialResponse) => {
-        const token = credentialResponse.credential;
+    // const auth = (credentialResponse) => {
+    //     const token = credentialResponse.credential;
 
-        authUser(token);
-        navigate('/');
-    };
+    //     authUser(token);
+    //     navigate("/");
+    // };
+
+    const validateYupSchema = Yup.object({
+        email: Yup.string()
+            .email("Некоректна пошта")
+            .required("Обов'язкове поле"),
+        password: Yup.string()
+            .min(6, "Повинно бути 8 і більше символів")
+            .required("Обов'язкове поле"),
+    });
+
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+            password: "",
+            rememberMe: false,
+        },
+        validationSchema: validateYupSchema,
+        onSubmit: handleSubmit,
+    });
 
     return (
         <>
@@ -80,28 +76,45 @@ const Login = ({ authUser }) => {
                 <Box
                     sx={{
                         marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
                     }}
                 >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box
+                        component="form"
+                        onSubmit={formik.handleSubmit}
+                        noValidate
+                        sx={{ mt: 1 }}
+                    >
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             id="email"
                             label="Email Address"
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            onChange={formik.handleChange}
+                            value={formik.values.email}
+                            onBlur={formik.handleBlur}
                         />
+                        {formik.touched.email && formik.errors.email ? (
+                            <Box sx={{ px: 1 }}>
+                                <FormLabel
+                                    fontSize="inherit"
+                                    sx={{ fontSize: "12px", color: "red" }}
+                                >
+                                    {formik.errors.email}
+                                </FormLabel>
+                            </Box>
+                        ) : null}
                         <TextField
                             margin="normal"
                             required
@@ -111,9 +124,29 @@ const Login = ({ authUser }) => {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            onChange={formik.handleChange}
+                            value={formik.values.password}
+                            onBlur={formik.handleBlur}
                         />
+                        {formik.touched.password && formik.errors.password ? (
+                            <Box sx={{ px: 1 }}>
+                                <FormLabel
+                                    fontSize="inherit"
+                                    sx={{ fontSize: "12px", color: "red" }}
+                                >
+                                    {formik.errors.password}
+                                </FormLabel>
+                            </Box>
+                        ) : null}
                         <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
+                            control={
+                                <Checkbox
+                                    name="rememberMe"
+                                    color="primary"
+                                    value={formik.values.rememberMe}
+                                    onChange={formik.handleChange}
+                                />
+                            }
                             label="Remember me"
                         />
                         <Button
@@ -136,21 +169,15 @@ const Login = ({ authUser }) => {
                                 </Link>
                             </Grid>
                         </Grid>
-                        {/* <GoogleReCaptcha
-        onVerify={token => {
-          setToken(token);
-        }}
-      /> */}
-                        {/* <ReCAPTCHA ref={recaptcha} sitekey='6LeOhLopAAAAAI1nACaUNjOyrL_MnZZ0kdcjalmC'/> */}
                     </Box>
                 </Box>
                 <GoogleOAuthProvider clientId={clientId}>
                     <GoogleLogin
                         onSuccess={(credentialResponse) => {
-                            auth(credentialResponse);
+                            // auth(credentialResponse);
                         }}
                         onError={() => {
-                            console.log('Login Failed');
+                            console.log("Login Failed");
                         }}
                     />
                 </GoogleOAuthProvider>
@@ -158,10 +185,6 @@ const Login = ({ authUser }) => {
             </Container>
         </>
     );
-}
-
-const mapDispatchToProps = {
-    authUser
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+export default Login;
