@@ -1,14 +1,11 @@
 const initState = {
-    user: null,
-    isAuth: false
+    users: []
 }
 
 const UserReducer = (state = initState, action) => {
     switch(action.type) {
-        case "USER_SIGNIN":
-            return {...state, isAuth: true, user: action.payload};
-        case "USER_LOGOUT":
-            return {...state, isAuth: false, user: null};
+        case "LOAD_USERS":
+            return { ...state, users: action.payload };
         default: return state;
     }
 }

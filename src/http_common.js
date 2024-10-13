@@ -1,7 +1,8 @@
 import axios from "axios";
+import APP_ENV from "./env";
 
 const http = axios.create({
-    baseURL: "https://newsapi.org/v2",
+    baseURL: APP_ENV.REMOTE_API_URL,
     headers: {
         "Content-Type": "application/json"
     }

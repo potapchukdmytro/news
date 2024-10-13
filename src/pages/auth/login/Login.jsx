@@ -13,12 +13,12 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../../../components/copyright";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { authUser } from "../../../store/reducers/userReducer/actions";
-import { connect, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useAction } from "../../../hooks/useAction";
+import { toast } from "react-toastify";
 
 const Login = () => {
     const [token, setToken] = useState();
@@ -35,11 +35,12 @@ const Login = () => {
     //     }
     // }, [isAuth])
 
-    const handleSubmit = async (values) => {
+    const handleSubmit = async (values) => {     
         const response = await signIn(values);
         if(!response.success) {
-            alert(response.message)
+            toast.error(response.message);
         } else {
+            toast.success(response.message);
             navigate("/");
         }
     };

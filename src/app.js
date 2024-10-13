@@ -8,12 +8,12 @@ import NewsPage from "./pages/newsPage";
 import UkrainePage from "./pages/ukrainePage";
 import ItPage from "./pages/itPage";
 import { Route, Routes } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { authUser } from "./store/reducers/userReducer/actions";
+import { useSelector } from "react-redux";
 import { useAction } from "./hooks/useAction";
+import UsersPage from "./pages/users/UsersPage";
 
 const App = () => {
-    const { isAuth } = useSelector((store) => store.auth);
+    const { isAuth, role } = useSelector((store) => store.auth);
     const { signInByToken } = useAction();
 
     useEffect(() => {
@@ -30,6 +30,10 @@ const App = () => {
                 <Route index element={<MainPage />} />
                 <Route path="ukraine" element={<UkrainePage />} />
                 <Route path="it" element={<ItPage />} />
+                
+                {(isAuth && role === "admin") && (
+                    <Route path="users" element={<UsersPage />} />
+                )}
                 {!isAuth && (
                     <>
                         <Route path="login" element={<Login />} />

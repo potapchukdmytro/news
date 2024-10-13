@@ -1,29 +1,22 @@
-import { jwtDecode } from "jwt-decode";
+import http from "../../../http_common";
 
-export const authUser = (token) => {
-    return (dispatch) => {
-        localStorage.setItem('token', JSON.stringify(token))
+export const loadUsers = () => async (dispatch) => {
+    try {
+        const token = localStorage.getItem("auth");
+        if(token == null) {
+            return;
+        }
 
-        const decoded = jwtDecode(token);
-        const name = decoded.given_name;
-        const surname = decoded.family_name;
-        const email = decoded.email;
-        const image = decoded.picture;
+        const response = await http.get("user", {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });        
 
-        const user = {
-            name: name,
-            surname: surname,
-            email: email,
-            image: image
-        };
-
-        dispatch({ type: 'USER_SIGNIN', payload: user });
-    };
-}
-
-export const userLogout = () => {
-    return(dispatch) => {
-        localStorage.removeItem('token');
-        dispatch({ type: 'USER_LOGOUT' });
-    };
-}
+        const { data } = response;
+        const users = data.payload;
+        dispatch({ type: "LOAD_USERS", payload: users });
+    } catch (error) {
+        console.log("Users error", error);
+    }
+};
