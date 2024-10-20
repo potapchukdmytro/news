@@ -19,7 +19,7 @@ const App = () => {
     useEffect(() => {
         const token = localStorage.getItem("auth");
 
-        if (token != null) {
+        if (token != null && token != undefined) {
             signInByToken(token);
         }
     }, []);

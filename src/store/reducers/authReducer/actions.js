@@ -8,7 +8,12 @@ export const signInByToken = (token) => async (dispatch) => {
 };
 
 const saveToken = (token) => {
+    if(token === null || token === undefined) {
+        return null;
+    }
+
     localStorage.setItem("auth", token);
+    
     const decodedToken = jwtDecode(token);
 
     const user = {
@@ -24,8 +29,9 @@ export const signIn = (model) => async (dispatch) => {
     try {        
         const response = await http.post("account/signin", model);      
         const { data } = response;
-        const token = data.payload;
-        const user = saveToken(token);
+        const tokens = data.payload;
+        const user = saveToken(tokens.accessToken);
+        localStorage.setItem("urt", tokens.refreshToken);
 
         dispatch({ type: "SIGN_IN", payload: user });
 
@@ -37,5 +43,6 @@ export const signIn = (model) => async (dispatch) => {
 
 export const logout = () => (dispatch) => {
     localStorage.removeItem("auth");
+    localStorage.removeItem("urt");
     dispatch({ type: "LOGOUT" });
 };
