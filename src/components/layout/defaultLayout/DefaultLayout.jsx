@@ -16,7 +16,7 @@ const DefaultLayout = ({ load }) => {
     return (
         <>
             <Navbar />
-            <Container fixed maxWidth="xl">
+            <Container sx={{pt: 3}} fixed maxWidth="xl">
                 {!loading ?
                     (<Outlet />) :
                     (<Loader />)}

@@ -24,7 +24,10 @@ const pages = [
     { title: "ІТ", path: "/it", role: "user" },
 ];
 
-const adminPages = [{ title: "Користувачі", path: "/users" }];
+const adminPages = [
+    { title: "Користувачі", path: "/users" },
+    { title: "Ролі", path: "/roles" }
+];
 
 const Navbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);

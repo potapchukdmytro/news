@@ -34,17 +34,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const UsersPage = () => {    
     const { users } = useSelector(store => store.user);
     const { loadUsers } = useAction();
-    
-    console.log(users);
-    
-    
 
     useEffect(() => {
         loadUsers();        
     },[]);
 
     return (
-        <TableContainer sx={{mt: 3}} component={Paper}>
+        <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                     <TableRow>

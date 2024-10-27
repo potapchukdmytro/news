@@ -11,6 +11,8 @@ import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAction } from "./hooks/useAction";
 import UsersPage from "./pages/users/UsersPage";
+import RolesPage from "./pages/roles/RolesPage";
+import NewRolePage from "./pages/roles/NewRolePage";
 
 const App = () => {
     const { isAuth, role } = useSelector((store) => store.auth);
@@ -30,9 +32,16 @@ const App = () => {
                 <Route index element={<MainPage />} />
                 <Route path="ukraine" element={<UkrainePage />} />
                 <Route path="it" element={<ItPage />} />
-                
-                {(isAuth && role === "admin") && (
-                    <Route path="users" element={<UsersPage />} />
+
+                {isAuth && role === "admin" && (
+                    <>
+                        <Route path="users" element={<UsersPage />} />
+                        <Route path="roles">
+                            <Route index element={<RolesPage />} />
+                            <Route path="newrole/:roleid" element={<NewRolePage />} />
+                            <Route path="newrole" element={<NewRolePage />} />
+                        </Route>
+                    </>
                 )}
                 {!isAuth && (
                     <>
