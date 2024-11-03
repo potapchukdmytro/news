@@ -26,7 +26,7 @@ const pages = [
 
 const adminPages = [
     { title: "Користувачі", path: "/users" },
-    { title: "Ролі", path: "/roles" }
+    { title: "Ролі", path: "/roles" },
 ];
 
 const Navbar = () => {
@@ -118,7 +118,9 @@ const Navbar = () => {
                         >
                             {pages.map((page) => (
                                 <Link key={page.title} to={page.path}>
-                                    <MenuItem onClick={() => handleCloseNavMenu()}>
+                                    <MenuItem
+                                        onClick={() => handleCloseNavMenu()}
+                                    >
                                         <Typography textAlign="center">
                                             {page.title}
                                         </Typography>
