@@ -1,12 +1,12 @@
 const initState = {
-    users: [],
+    data: { users: [] },
     roles: []
 }
 
 const UserReducer = (state = initState, action) => {
     switch(action.type) {
         case "LOAD_USERS":
-            return { ...state, users: action.payload };
+            return { ...state, data: action.payload };
         case "LOAD_ROLES":
             return { ...state, roles: action.payload };
         case "DELETE_ROLE":
